@@ -7,6 +7,7 @@ import re
 from nltk.corpus import wordnet
 nltk.download('wordnet', quiet=True)
 nltk.download('omw', quiet=True)
+nltk.download('punkt', quiet=True)
 
 def redact_names(data):
     words = nltk.word_tokenize(data)
