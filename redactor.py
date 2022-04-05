@@ -28,11 +28,16 @@ def main(args):
         redact_counts = {}
         #To collect redacted quantities
         redact_list = {}
+        
+        if args.address:
+            data,address_list = redact_address(data)
+            redact_counts["address_count"] = len(address_list)
+            redact_list["address_list"] = address_list
+
         if args.names:
             data, names_list = redact_names(data)
             redact_counts["names_count"] = len(names_list)
             redact_list["names_list"] = names_list
-
 
         if args.dates:
             data,dates_list = redact_dates(data)
@@ -49,17 +54,10 @@ def main(args):
             redact_counts["genders_count"] = len(genders_list)
             redact_list["genders_list"] = genders_list
         
-        if args.address:
-            data,address_list = redact_address(data)
-            print(address_list)
-            redact_counts["address_count"] = len(address_list)
-            redact_list["address_list"] = address_list
-
         if args.concept:
             data,concept_list = redact_concept(data,args.concept)
             redact_counts["concept_count"] = len(concept_list)
             redact_list["concept_list"] = concept_list
-
 
         if args.output == 'stdout' or args.output == 'stderr':
             if args.output == 'stdout':
@@ -115,25 +113,32 @@ def write_to_files_stats(raw_file, stats):
 
 def redact_stats(args, redact_counts, redact_list):
     stats_list = []
+    
 
     if vars(args)['names']:
         stats_list.append(f"In total {redact_counts['names_count']} names got redacted.")
         stats_list.append(f"\tThe names that got redacted are {redact_list['names_list']} ")
+
     if vars(args)['dates']:
         stats_list.append(f"In total {redact_counts['dates_count']} dates got redacted.")
         stats_list.append(f"\tThe dates that got redacted are {redact_list['dates_list']} ")
+
     if vars(args)['phones']:
         stats_list.append(f"In total {redact_counts['phones_count']} phone numbers got redacted.")
         stats_list.append(f"\tThe phones that got redacted are {redact_list['phones_list']} ")
+
     if vars(args)['genders']:
         stats_list.append(f"In total {redact_counts['genders_count']} genders got redacted.")
         stats_list.append(f"\tThe genders that got redacted are {redact_list['genders_list']} ")
+
     if vars(args)['address']:
         stats_list.append(f"In total {redact_counts['address_count']} address/es got redacted.")
         stats_list.append(f"\tThe address/es that got redacted are {redact_list['address_list']} ")
+        
     if vars(args)['concept']:
         stats_list.append(f"In total {redact_counts['concept_count']} concept sentences got redacted.")
         stats_list.append(f"\tThe concept statements that got redacted are {redact_list['concept_list']} ")
+    
     return "\n".join(stats_list)
 
 if __name__=='__main__':

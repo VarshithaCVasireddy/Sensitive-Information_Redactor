@@ -24,19 +24,19 @@ The Redactor is a program for hiding sensitive information such as Names, and pl
 ## 1. main.py
 This file consists of 6 functions. Each function redacts different entities.
 ### i. redact_names(data)
-In this function, the names will be redacted from the data file. By using Nltk the data is word tokenized, then the words are classified into parts of speech and labeling is done, then chuncking is done on the classified data to give chunk tags. Then subtress is selected with label as 'PERSON'.
+In this function, the names will be redacted from the data file. By using Nltk the data is word tokenized, then the words are classified into parts of speech and labeling is done, then chuncking is done on the classified data to give chunk tags. Then subtress is selected with label as 'PERSON' or 'GPE'
 ~~~
 def redact_names(data):
     words = nltk.word_tokenize(data)
     tag = nltk.pos_tag(words)
     tree = nltk.ne_chunk(tag)
-    names_list = [ent[0][0] for ent in list(tree.subtrees()) if ent.label() in ['PERSON']]
-    #names_list = [ent[0][0] for ent in list(tree.subtrees()) if ent.label() in ['PERSON','GPE']]
+    #names_list = [ent[0][0] for ent in list(tree.subtrees()) if ent.label() in ['PERSON']]
+    names_list = [ent[0][0] for ent in list(tree.subtrees()) if ent.label() in ['PERSON','GPE']]
     for item in names_list:
         data = data.replace(item, '\u2588'* len(item))
     return data, names_list
 ~~~
-This gives names of persons. And the words with the 'PERSON' tag will be redacted by a block character. I am only assuming person's names are to be dedacted from this function, I am not redacting Geopolitical/geographical entities.
+I am redacting all names of persons and geopolitical and geographical entities, like country and city names as well.
 This function gives the data that is redacted and the list of names that got redacted.
 
 ### ii.redact_dates(data)
@@ -142,7 +142,7 @@ Below are the input arguments that are added by the add_argument method.
 - --output
 - --stats  
 
-Firstly 2 empty dictionaries are considered namely "redact_counts" and "redact_list" to count redacted words/sentences for a particular argument and to write the redacted words/sentences data for a particular argument respectively. 
+Firstly 2 empty dictionaries are considered namely "redact_counts" and "redact_list" to count redacted words/sentences for a particular argument and to write the redacted words/sentences data for a particular argument respectively for each function.
 ### --input
 Extension of the files is given as part of this argument. Ex: "*.txt". This is a required argument.  
 glob.glob is taken to pull all the files with the given input extension.
@@ -192,8 +192,49 @@ out_file_name = '.'.join(raw_file.split('.')[:-1] + ['redacted'])
 ~~~
 
 ### --stats
-If this argument is given then stats file has to be created and it tells on how that stats file has to be displayed or saved into another file by giving the file name. If stdout or stderr is given in argument, then stats file is displayed on console, else stats summary is sent into file where file name is specified in the console.
+If this argument is given then stats file has to be created and it tells on how that stats file has to be displayed or saved into another file by giving the file name. If stdout or stderr is given in argument, then stats file is displayed on console, else stats summary is sent into file where file name is specified in the console. And stats is written for each input file that is given to the program.
 
+~~~
+def write_to_files_stats(raw_file, stats):
+    raw_file_path = os.path.join(os.getcwd(), raw_file)
+
+    with open(raw_file_path, 'w') as f:
+        f.write(stats)
+
+    print(f"Stats to {raw_file_path}")
+    print("\n")
+~~~
+
+I also wrote another function for stats which tells about the summary of the redactions that are done to the given input file. It is named as **redact_stats**, arguments, the redacted words/sentences list and the count of the redacted items are taken as the input arguments. Input Arguments are checked and summary is written accordingly. **redact_counts** and **redact_list** are used in the stats file to give the summary.
+
+Below is the redact_stats function.
+~~~
+def redact_stats(args, redact_counts, redact_list):
+    stats_list = []
+
+    if vars(args)['names']:
+        stats_list.append(f"In total {redact_counts['names_count']} names got redacted.")
+        stats_list.append(f"\tThe names that got redacted are {redact_list['names_list']} ")
+    if vars(args)['dates']:
+        stats_list.append(f"In total {redact_counts['dates_count']} dates got redacted.")
+        stats_list.append(f"\tThe dates that got redacted are {redact_list['dates_list']} ")
+    if vars(args)['phones']:
+        stats_list.append(f"In total {redact_counts['phones_count']} phone numbers got redacted.")
+        stats_list.append(f"\tThe phones that got redacted are {redact_list['phones_list']} ")
+    if vars(args)['genders']:
+        stats_list.append(f"In total {redact_counts['genders_count']} genders got redacted.")
+        stats_list.append(f"\tThe genders that got redacted are {redact_list['genders_list']} ")
+    if vars(args)['address']:
+        stats_list.append(f"In total {redact_counts['address_count']} address/es got redacted.")
+        stats_list.append(f"\tThe address/es that got redacted are {redact_list['address_list']} ")
+    if vars(args)['concept']:
+        stats_list.append(f"In total {redact_counts['concept_count']} concept sentences got redacted.")
+        stats_list.append(f"\tThe concept statements that got redacted are {redact_list['concept_list']} ")
+    return "\n".join(stats_list)
+~~~
+
+### Functions calling placement
+When calling functions, I am first calling **redact_address** so that address gets redacted first and then later functions are called and redactions takes place. If the address is "1619 George Washington Lane", then if redact_names function is called first, it redacts George and when redact_address function tries to check address, it is not considered as address and hence that doesn't get redacted. But if address is called first after redacting all addresses later names will be detected and redacted.
 
 ## 3. tests
 Written 6 different test files for 6 different function that I wrote in main.py file. 
@@ -254,7 +295,6 @@ def test_word(input, expected_text, expected_count):
 
 ## 4. Assumptions/Bugs
 - Few names which matches with english language Adjectives or nouns doesn't get redacted for example in name Christian Varshitha, only Varshitha gets redacted. Jasmine is not considered as name by the nltk module.
-- My code doesn't redact geopolitical/geographical entity names like country names or location names. It also doesn't redact organization names. So if you want even them to be redacted then my code fails.
 - My code can only detect US mailing addresses. Addresses from other countries can't be detected with this code.
 
 ## **Steps to Run project0**

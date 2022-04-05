@@ -16,7 +16,7 @@ def redact_names(data):
     words = nltk.word_tokenize(data)
     tag = nltk.pos_tag(words)
     tree = nltk.ne_chunk(tag)
-    names_list = [ent[0][0] for ent in list(tree.subtrees()) if ent.label() in ['PERSON']]
+    names_list = [ent[0][0] for ent in list(tree.subtrees()) if ent.label() in ['PERSON','GPE']]
     for item in names_list:
         data = data.replace(item, '\u2588'* len(item))
     return data, names_list
