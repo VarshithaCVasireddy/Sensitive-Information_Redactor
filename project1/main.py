@@ -6,7 +6,10 @@ from nltk import word_tokenize, sent_tokenize
 import re
 from nltk.corpus import wordnet
 nltk.download('wordnet', quiet=True)
-nltk.download('omw', quiet=True)
+nltk.download('averaged_perceptron_tagger', quiet=True)
+nltk.download('maxent_ne_chunker', quiet=True)
+nltk.download('words', quiet=True)
+nltk.download('omw-1.4', quiet=True)
 nltk.download('punkt', quiet=True)
 
 def redact_names(data):
