@@ -22,7 +22,23 @@ The Redactor is a program for hiding sensitive information such as Names, and pl
 - pyap
 
 ## 1. main.py
-This file consists of 6 functions. Each function redacts different entities.
+This file consists of 6 functions. Each function redacts different entities.  
+Below packages are to be imported and downloaded in order for the main.py to run successfully.
+~~~
+import nltk
+from commonregex import CommonRegex
+import pyap
+from nltk.stem import WordNetLemmatizer
+from nltk import word_tokenize, sent_tokenize
+import re
+from nltk.corpus import wordnet
+nltk.download('wordnet', quiet=True)
+nltk.download('averaged_perceptron_tagger', quiet=True)
+nltk.download('maxent_ne_chunker', quiet=True)
+nltk.download('words', quiet=True)
+nltk.download('omw-1.4', quiet=True)
+nltk.download('punkt', quiet=True)
+~~~
 ### i. redact_names(data)
 In this function, the names will be redacted from the data file. By using Nltk the data is word tokenized, then the words are classified into parts of speech and labeling is done, then chuncking is done on the classified data to give chunk tags. Then subtress is selected with label as 'PERSON' or 'GPE'
 ~~~
@@ -107,28 +123,31 @@ Data that is redacted and the list of redacted addresses is returned.
 referred: https://github.com/vladimarius/pyap
 
 ### vi. redact_concept(data,concepts)
-In this function the whole sentence which contains the concepts argument word will be redacted. Synonyms for the concepts arguments will be taken with the help of **wordnet.synsets(concepts)** and **.name()** for the lemmation will give synonyms list.  
+In this function the whole sentence which contains the concepts argument word will be redacted. Synonyms for the concepts arguments will be taken with the help of **wordnet.synsets(concepts)** and **.name()** for the lemmation will give synonyms list. The word is converted into lower case and then synonyms of it are taken.  
 The data is converted into sentences using **sent_tokenize(data)** and then into words. And each word is checked with the synonyms list and if any word is matching the synonym list then the entire sentence of that particular word is replaced by blocked character.
 ~~~
 def redact_concept(data,concepts):
     synonyms = []
     concept_redacted_list = []
     for concept in concepts:
-        for syn in wordnet.synsets(concept):
+        for syn in wordnet.synsets(concept.lower()):
             synonyms += [l.name() for l in syn.lemmas()]
     l = WordNetLemmatizer()
     sentences = sent_tokenize(data)
-    for s in sentences:
+    for s in sentences:    
         tokens = word_tokenize(s)
-        tok_lemmas = [l.lemmatize(token) for token in tokens]
+        list2 = []
+        for words1 in tokens:
+            list2.append(words1.lower())
+        tok_lemmas = [l.lemmatize(token) for token in list2]
         
         for tok_lemma in tok_lemmas:
-            if tok_lemma in synonyms:
+            if tok_lemma.lower() in synonyms:
                 concept_redacted_list = concept_redacted_list + [s]
                 data = data.replace(s, '\u2588'* len(s))
                 continue    
     
-    return data, concept_redacted_list
+    return data, concept_redacted_list 
 ~~~
 Data file after redaction and the list of redacted sentences are returned.
 
@@ -303,7 +322,7 @@ def test_word(input, expected_text, expected_count):
 - Few names which matches with english language Adjectives or nouns doesn't get redacted for example in name Christian Varshitha, only Varshitha gets redacted. Jasmine is not considered as name by the nltk module.
 - My code can only detect US mailing addresses. Addresses from other countries can't be detected with this code.
 - When digit and months full name comes then only first 3 alphabets of months get redacted. Ex from 16 November only 16 Nov gets redacted. 
-- Few surnames
+- Few surnames are not getting redacted. Few names are not getting redacted, so except this erros in the project.
 
 ## **Steps to Run project0**
 

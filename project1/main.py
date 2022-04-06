@@ -68,13 +68,16 @@ def redact_concept(data,concepts):
     synonyms = []
     concept_redacted_list = []
     for concept in concepts:
-        for syn in wordnet.synsets(concept):
+        for syn in wordnet.synsets(concept.lower()):
             synonyms += [l.name() for l in syn.lemmas()]
     l = WordNetLemmatizer()
     sentences = sent_tokenize(data)
-    for s in sentences:
+    for s in sentences:    
         tokens = word_tokenize(s)
-        tok_lemmas = [l.lemmatize(token) for token in tokens]
+        list2 = []
+        for words1 in tokens:
+            list2.append(words1.lower())
+        tok_lemmas = [l.lemmatize(token) for token in list2]
         
         for tok_lemma in tok_lemmas:
             if tok_lemma.lower() in synonyms:

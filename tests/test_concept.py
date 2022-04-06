@@ -10,7 +10,7 @@ testdata = [
 
 @pytest.mark.parametrize("input,expected_text,expected_count", testdata)
 def test_word(input, expected_text, expected_count):
-    actual_text, word_list = redact_concept(input,concepts=['kid','school','movie'])
+    actual_text, word_list = redact_concept(input,concepts=['kids','school','movie'])
     #print(actual_text)
 
     assert actual_text == expected_text

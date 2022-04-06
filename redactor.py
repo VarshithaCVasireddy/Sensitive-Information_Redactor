@@ -29,6 +29,11 @@ def main(args):
         #To collect redacted quantities
         redact_list = {}
         
+        if args.concept:
+            data,concept_list = redact_concept(data,args.concept)
+            redact_counts["concept_count"] = len(concept_list)
+            redact_list["concept_list"] = concept_list
+
         if args.address:
             data,address_list = redact_address(data)
             redact_counts["address_count"] = len(address_list)
@@ -54,11 +59,6 @@ def main(args):
             redact_counts["genders_count"] = len(genders_list)
             redact_list["genders_list"] = genders_list
         
-        if args.concept:
-            data,concept_list = redact_concept(data,args.concept)
-            redact_counts["concept_count"] = len(concept_list)
-            redact_list["concept_list"] = concept_list
-
         if args.output == 'stdout' or args.output == 'stderr':
             if args.output == 'stdout':
                 sys.stdout.write(data)
