@@ -77,7 +77,7 @@ def redact_concept(data,concepts):
         tok_lemmas = [l.lemmatize(token) for token in tokens]
         
         for tok_lemma in tok_lemmas:
-            if tok_lemma in synonyms:
+            if tok_lemma.lower() in synonyms:
                 concept_redacted_list = concept_redacted_list + [s]
                 data = data.replace(s, '\u2588'* len(s))
                 continue    

@@ -3,7 +3,8 @@ import pytest
 from project1.main import redact_dates
 
 testdata = [
-    ("Today date is 4/3/2021, my birthday is on November 16th 1997", "Today date is ████████, my birthday is on ██████████████████", 2)
+    ("Today date is 4/3/2021, my birthday is on November 16th 1997", "Today date is ████████, my birthday is on ██████████████████", 2),
+    
 ]
 
 

@@ -3,7 +3,8 @@ import pytest
 from project1.main import redact_phones
 
 testdata = [
-    ("My Phone no. is +1(469)604-6217, +919553340279", "My Phone no. is ███████████████, █████████████", 2)
+    ("My Phone no. is +1(469)604-6217, +919553340279", "My Phone no. is ███████████████, █████████████", 2),
+    ("I got a new phone number +1(569)6046217, +919247282039","I got a new phone number ██████████████, █████████████",2)
 ]
 
 

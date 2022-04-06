@@ -4,6 +4,7 @@ from project1.main import redact_genders
 
 testdata = [
     ("He is my friend", "██ is my friend", 1)
+    
 ]
 
 

@@ -3,7 +3,9 @@ import pytest
 from project1.main import redact_names
 
 testdata = [
-    ("My name is Gandhi. Nicholson teaches us a subject", "My name is ██████. █████████ teaches us a subject", 2)
+    ("My name is Gandhi. Nicholson teaches us a subject", "My name is ██████. █████████ teaches us a subject", 2),
+    ("I went to Oklahoma","I went to ████████",1),
+    ("I ran to Dallas","I ran to ██████",1)
 ]
 
 
