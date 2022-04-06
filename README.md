@@ -324,7 +324,7 @@ def test_word(input, expected_text, expected_count):
 - When digit and months full name comes then only first 3 alphabets of months get redacted. Ex from 16 November only 16 Nov gets redacted. 
 - Few surnames are not getting redacted. Few names are not getting redacted, so except this erros in the project.
 
-## **Steps to Run project0**
+## **Steps to Run project1**
 
 - **Step1**  
 Clone the project directory using below command
