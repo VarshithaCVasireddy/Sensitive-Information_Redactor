@@ -33,7 +33,7 @@ def redact_dates(data):
     pattern = r'(\d{1,4}/\d{1,2}/\d{1,4})'
     dates_re_list = re.findall(pattern,data)
     dates_list = set(dates_ent_list + dates_re_list)
-    list_to_excluded = ["day", "tomorrow","yesterday","today","Day","Today","Tomorrow"]
+    list_to_excluded = ["day", "tomorrow","yesterday","today","Day","Today","Tomorrow","century","weeks","week","Week","Weeks","week's","Week's","year", "Year","Year's","year's","month","Month","month's","Month's","months","Months"]
     for i in list_to_excluded:
         if i in dates_list:
             dates_list.remove(i)
