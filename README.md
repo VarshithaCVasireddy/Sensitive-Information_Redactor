@@ -75,7 +75,7 @@ def redact_dates(data):
         data = data.replace(items,'\u2588'* len(items))
     return data,dates_list
 ~~~
-I am first converting the data into nlp and creating a list called "dates_ent_list" when labels are "DATE". A pattern of regex expression which matches dates in the format "yyyy/mm/dd" or "dd/mm/yyyy" is written i.e **'(\d{1,4}/\d{1,2}/\d{1,4})'** and the data is checked with that pattern and a new list called **dates_re_list**. The lists are then added and in order to avoid duplicates "set" datatype is used and then set is iterated and each element of set is redacted.
+I am first converting the data into nlp and creating a list called "dates_ent_list" when labels are "DATE". A pattern of regex expression which matches dates in the format "yyyy/mm/dd" or "dd/mm/yyyy" is written i.e **'(\d{1,4}/\d{1,2}/\d{1,4})'** and the data is checked with that pattern and a new list called **dates_re_list**. The lists are then added and in order to avoid duplicates "set" datatype is used and then set is iterated and each element of set is redacted. Words like "day, tomorrow and yesterday" are also getting recognized by spacy as DATES, so I removed them from the set and then redacted the remaining recognized dates
 
 Referred: https://github.com/madisonmay/CommonRegex
 

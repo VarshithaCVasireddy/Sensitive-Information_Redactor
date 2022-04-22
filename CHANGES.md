@@ -44,11 +44,11 @@ def redact_dates(data):
 ~~~
 I am first converting the data into nlp and creating a list called "dates_ent_list" when labels are "DATE". A pattern of regex expression which matches dates in the format "yyyy/mm/dd" or "dd/mm/yyyy" is written i.e **'(\d{1,4}/\d{1,2}/\d{1,4})'** and the data is checked with that pattern and a new list called **dates_re_list**.
 The lists are then added and in order to avoid duplicates "set" datatype is used and then set is iterated and each element of set is redacted.
-Words like "day, tomorrow and yesterday" are also getting redacted by spacy so I removed them from the set and then redacted the remaining recognized dates
+Words like "day, tomorrow and yesterday" are also getting recognized by spacy as "dates" so I removed them from the set and then redacted the remaining recognized dates
 
 
 ## Assumptions:
-Spacy recognizes absolute or relative dates or periods, so it also recognizes "Early 19's, half a century ago, 2nd semester, ago 20, age 19, today, yesterday, day, etc"  also as dates and redactes them.
+Spacy recognizes absolute or relative dates or periods, so it also recognizes "Early 19's, half a century ago, 2nd semester, ago 20, age 19, etc"  also as dates and redactes them.
 
 ## Results of changes
 Output files not stored in respective folder --- I corrected the code so the files are outputed and correctly saved in the output folder.
