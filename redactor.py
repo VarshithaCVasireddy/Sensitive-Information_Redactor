@@ -21,7 +21,7 @@ def main(args):
             with open(raw_file, 'r') as f:
                 data = f.read()
         except:
-            print(f"{raw_file} that is given can't be read and so it can't be redacted\n")
+            print(f"{raw_file} file that is given can't be read, and so it can't be redacted\n")
             continue
         
         #To count redacted ones
@@ -90,7 +90,8 @@ def write_to_files(raw_file, data):
     if not os.path.exists(args.output):
         os.mkdir(args.output)
     
-    out_file_name = '.'.join(raw_file.split('.')[:-1] + ['redacted'])
+    out_file_name = f"{raw_file}.redacted"
+
     sub_folders = out_file_name.split('/')[:-1]
     for sub_folder in sub_folders:
         sub_folder_path = os.path.join(args.output, sub_folder)

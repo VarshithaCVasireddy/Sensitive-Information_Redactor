@@ -20,6 +20,7 @@ The Redactor is a program for hiding sensitive information such as Names, and pl
 - nltk
 - re
 - pyap
+- spacy
 
 ## 1. main.py
 This file consists of 6 functions. Each function redacts different entities.  
@@ -31,6 +32,8 @@ import pyap
 from nltk.stem import WordNetLemmatizer
 from nltk import word_tokenize, sent_tokenize
 import re
+import spacy
+nlp = spacy.load("en_core_web_lg")
 from nltk.corpus import wordnet
 nltk.download('wordnet', quiet=True)
 nltk.download('averaged_perceptron_tagger', quiet=True)
@@ -56,16 +59,23 @@ I am redacting all names of persons and geopolitical and geographical entities, 
 This function gives the data that is redacted and the list of names that got redacted.
 
 ### ii.redact_dates(data)
-This function will redact dates. Used a package called **commonregex** to do this. The data is firstly changed into Regex data and then a method called dates is applied to the data to extract dates.
+I changed the redacting dates functions. I now used spacy to redact dates.
+I also included regex equation inorder to pull all dates which will not detected by spacy
 ~~~
-    data1 = CommonRegex(data)
-    dates_list = data1.dates
-    for item in dates_list:
-        data = data.replace(item,'\u2588'* len(item))
-    return data, dates_list
+def redact_dates(data):
+    data1 = nlp(data)
+    dates_ent_list = []
+    for i in [ent.text.split('\n') for ent in data1.ents if ent.label_ == "DATE"]:
+        for j in i:
+            dates_ent_list.append(j)
+    pattern = '(\d{1,4}/\d{1,2}/\d{1,4})'
+    dates_re_list = re.findall(pattern,data)
+    dates_list = set(dates_ent_list + dates_re_list)
+    for items in dates_list:
+        data = data.replace(items,'\u2588'* len(items))
+    return data,dates_list
 ~~~
-the dates gets replaced by block character, impling it will be redacted from the data.  
-Data and list of dates that got redacted are returned.
+I am first converting the data into nlp and creating a list called "dates_ent_list" when labels are "DATE". A pattern of regex expression which matches dates in the format "yyyy/mm/dd" or "dd/mm/yyyy" is written i.e **'(\d{1,4}/\d{1,2}/\d{1,4})'** and the data is checked with that pattern and a new list called **dates_re_list**. The lists are then added and in order to avoid duplicates "set" datatype is used and then set is iterated and each element of set is redacted.
 
 Referred: https://github.com/madisonmay/CommonRegex
 
@@ -185,6 +195,9 @@ except:
 ### --names
 If this argument is given, all names present in the data file will be redacted. redact_names function will be called and the data and redacted list output is taken in redact_list dictionary and redact_count dictionary respectively.
 
+### --dates
+If this argument is given, then all dates in the data file will be redacted. redact_dates function will be called, output is stored in the dictionaries that are mentioned above.
+
 ### --phones
 If this argument is given, then all phone numbers in the data file will be redacted. redact_phones function will be called, output is stored in the dictionaries that are mentioned above.
 
@@ -202,10 +215,13 @@ It tells about how the output of the data is to be display. if given "stdout" or
 >sys.stdout.write(data)
 
 To write output into the input_files path and the same name as input_file below code is used.
-
-raw_file is the input file, and it is split after . and "redacted" is added as extension. if input is given from the subfolders then the output also has to be created in that subfolder so "/" is used for split and then same is done as discussed above.
 ~~~
-out_file_name = '.'.join(raw_file.split('.')[:-1] + ['redacted'])
+def write_to_files(raw_file, data):
+    if not os.path.exists(args.output):
+        os.mkdir(args.output)
+    
+    out_file_name = f"{raw_file}.redacted"
+
     sub_folders = out_file_name.split('/')[:-1]
     for sub_folder in sub_folders:
         sub_folder_path = os.path.join(args.output, sub_folder)
@@ -214,7 +230,10 @@ out_file_name = '.'.join(raw_file.split('.')[:-1] + ['redacted'])
 
     with open(os.path.join(args.output, out_file_name), 'w') as f:
         f.write(data)
+
+    print(f"Saved to {os.path.join(args.output, out_file_name)}")
 ~~~
+I changed the code so that the file name is taken and .redacted is added to it, if input is given from the subfolders then the output also has to be created in that subfolder so "/" is used for split. Then also naming the file and making sure that it is created in the correct path, the redacted data is written into it.
 
 ### --stats
 If this argument is given then stats file has to be created and it tells on how that stats file has to be displayed or saved into another file by giving the file name. If stdout or stderr is given in argument, then stats file is displayed on console, else stats summary is sent into file where file name is specified in the console. And stats is written for each input file that is given to the program.
@@ -321,7 +340,7 @@ def test_word(input, expected_text, expected_count):
 ## 4. Assumptions/Bugs
 - Few names which matches with english language Adjectives or nouns doesn't get redacted for example in name Christian Varshitha, only Varshitha gets redacted. Jasmine is not considered as name by the nltk module.
 - My code can only detect US mailing addresses. Addresses from other countries can't be detected with this code.
-- When digit and months full name comes then only first 3 alphabets of months get redacted. Ex from 16 November only 16 Nov gets redacted. 
+- Spacy recognizes absolute or relative dates or periods, so it also recognizes "Early 19's, half a century ago, 2nd semester, ago 20, age 19"  also as dates and redacted them. 
 - Few surnames are not getting redacted. Few names are not getting redacted, so except this erros in the project.
 
 ## **Steps to Run project1**

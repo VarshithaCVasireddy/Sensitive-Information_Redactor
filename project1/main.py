@@ -4,6 +4,8 @@ import pyap
 from nltk.stem import WordNetLemmatizer
 from nltk import word_tokenize, sent_tokenize
 import re
+import spacy
+nlp = spacy.load("en_core_web_lg")
 from nltk.corpus import wordnet
 nltk.download('wordnet', quiet=True)
 nltk.download('averaged_perceptron_tagger', quiet=True)
@@ -21,13 +23,27 @@ def redact_names(data):
         data = data.replace(item, '\u2588'* len(item))
     return data, names_list
 
-def redact_dates(data):
-    data1 = CommonRegex(data)
-    dates_list = data1.dates
-    for item in dates_list:
-        data = data.replace(item,'\u2588'* len(item))
-    return data, dates_list
 
+def redact_dates(data):
+    data1 = nlp(data)
+    dates_ent_list = []
+    for i in [ent.text.split('\n') for ent in data1.ents if ent.label_ == "DATE"]:
+        for j in i:
+            dates_ent_list.append(j)
+    pattern = '(\d{1,4}/\d{1,2}/\d{1,4})'
+    dates_re_list = re.findall(pattern,data)
+    dates_list = set(dates_ent_list + dates_re_list)
+    for items in dates_list:
+        data = data.replace(items,'\u2588'* len(items))
+    return data,dates_list
+
+# def redact_dates(data):
+#     data1 = CommonRegex(data)
+#     dates_list = data1.dates
+#     for item in dates_list:
+#         data = data.replace(item,'\u2588'* len(item))
+#     return data, dates_list
+    
 def redact_phones(data):
     data1 = CommonRegex(data)
     phones_list = data1.phones
