@@ -1,13 +1,6 @@
 # **cs5293sp22-project1**
 # **Author: Varshitha Choudary Vasireddy**
 
-
-## Setting up the initial installations
-Below packages are to be installed in the project's virtual environment to successfully run the project. The below command has to be followed.
-~~~
-pipenv install nltk, numpy, commonregex, pyap, pytest
-~~~
-
 ## Description of the project:
 The Redactor is a program for hiding sensitive information such as Names, and places from the public. Whenever sensitive information is shared with the public, the data must go through a redaction process. That is, all sensitive names, places, and other sensitive information must be hidden. Documents such as police reports, court transcripts, and hospital records all containing sensitive information. Redacting this information is often expensive and time consuming. In this project, we will use our knowledge of Python and Text Analytics to design a system that accept plain text documents then detect and redact “sensitive” items.
 
