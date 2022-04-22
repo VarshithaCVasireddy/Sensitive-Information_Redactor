@@ -30,9 +30,13 @@ def redact_dates(data):
     for i in [ent.text.split('\n') for ent in data1.ents if ent.label_ == "DATE"]:
         for j in i:
             dates_ent_list.append(j)
-    pattern = '(\d{1,4}/\d{1,2}/\d{1,4})'
+    pattern = r'(\d{1,4}/\d{1,2}/\d{1,4})'
     dates_re_list = re.findall(pattern,data)
     dates_list = set(dates_ent_list + dates_re_list)
+    list_to_excluded = ["day", "tomorrow","yesterday","today","Day","Today","Tomorrow"]
+    for i in list_to_excluded:
+        if i in dates_list:
+            dates_list.remove(i)
     for items in dates_list:
         data = data.replace(items,'\u2588'* len(items))
     return data,dates_list

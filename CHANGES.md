@@ -31,17 +31,24 @@ def redact_dates(data):
     for i in [ent.text.split('\n') for ent in data1.ents if ent.label_ == "DATE"]:
         for j in i:
             dates_ent_list.append(j)
-    pattern = '(\d{1,4}/\d{1,2}/\d{1,4})'
+    pattern = r'(\d{1,4}/\d{1,2}/\d{1,4})'
     dates_re_list = re.findall(pattern,data)
     dates_list = set(dates_ent_list + dates_re_list)
+    list_to_excluded = ["day", "tomorrow","yesterday","today","Day","Today","Tomorrow"]
+    for i in list_to_excluded:
+        if i in dates_list:
+            dates_list.remove(i)
     for items in dates_list:
         data = data.replace(items,'\u2588'* len(items))
     return data,dates_list
 ~~~
-I am first converting the data into nlp and creating a list called "dates_ent_list" when labels are "DATE". A pattern of regex expression which matches dates in the format "yyyy/mm/dd" or "dd/mm/yyyy" is written i.e **'(\d{1,4}/\d{1,2}/\d{1,4})'** and the data is checked with that pattern and a new list called **dates_re_list**. The lists are then added and in order to avoid duplicates "set" datatype is used and then set is iterated and each element of set is redacted.
+I am first converting the data into nlp and creating a list called "dates_ent_list" when labels are "DATE". A pattern of regex expression which matches dates in the format "yyyy/mm/dd" or "dd/mm/yyyy" is written i.e **'(\d{1,4}/\d{1,2}/\d{1,4})'** and the data is checked with that pattern and a new list called **dates_re_list**.
+The lists are then added and in order to avoid duplicates "set" datatype is used and then set is iterated and each element of set is redacted.
+Words like "day, tomorrow and yesterday" are also getting redacted by spacy so I removed them from the set and then redacted the remaining recognized dates
+
 
 ## Assumptions:
-Spacy recognizes absolute or relative dates or periods, so it also recognizes "Early 19's, half a century ago, 2nd semester, ago 20, age 19"  also as dates and redactes them.
+Spacy recognizes absolute or relative dates or periods, so it also recognizes "Early 19's, half a century ago, 2nd semester, ago 20, age 19, today, yesterday, day, etc"  also as dates and redactes them.
 
 ## Results of changes
 Output files not stored in respective folder --- I corrected the code so the files are outputed and correctly saved in the output folder.
@@ -59,7 +66,7 @@ git clone https://github.com/VarshithaCVasireddy/cs5293sp22-project1
 Navigate to directory that we cloned from git and run the below command to install dependencies
 
 ~~~
-pip install pipenv
+pipenv install
 ~~~
 
 - **Step3**  
