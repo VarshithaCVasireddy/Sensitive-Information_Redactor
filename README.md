@@ -1,4 +1,4 @@
-# **cs5293sp22-project1**
+# **Sensitive Information Redactor**
 # **Author: Varshitha Choudary Vasireddy**
 
 ## Description of the project:
