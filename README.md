@@ -338,7 +338,7 @@ def test_word(input, expected_text, expected_count):
 - Few names which matches with english language Adjectives or nouns doesn't get redacted for example in name Christian Varshitha, only Varshitha gets redacted. Jasmine is not considered as name by the nltk module.
 - My code can only detect US mailing addresses. Addresses from other countries can't be detected with this code.
 - Spacy recognizes absolute or relative dates or periods, so it also recognizes "Early 19's, half a century ago, 2nd semester, ago 20, age 19"  also as dates and redacted them. 
-- Few surnames are not getting redacted. Few names are not getting redacted, so except this erros in the project.
+- Few surnames are not getting redacted. Few names are not getting redacted, so except this errors in the project.
 
 ## **Steps to Run project1**
 
@@ -346,7 +346,7 @@ def test_word(input, expected_text, expected_count):
 Clone the project directory using below command
 
 ~~~json
-git clone https://github.com/VarshithaCVasireddy/cs5293sp22-project1
+git clone https://github.com/VarshithaCVasireddy/Sensitive_Information_Redactor.git
 ~~~
   
 -**Step2**
